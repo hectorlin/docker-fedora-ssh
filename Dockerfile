@@ -1,7 +1,7 @@
 # Simple Fedora container with SSH server
 FROM fedora:latest
 
-# Install SSH server and basic tools
+# Install SSH server, basic tools, and C/C++ development tools
 RUN dnf update -y && \
     dnf install -y \
     openssh-server \
@@ -11,6 +11,37 @@ RUN dnf update -y && \
     net-tools \
     iputils \
     passwd \
+    gcc \
+    gcc-c++ \
+    gdb \
+    make \
+    cmake \
+    ninja-build \
+    clang \
+    clang-tools-extra \
+    lldb \
+    valgrind \
+    strace \
+    ltrace \
+    git \
+    wget \
+    curl \
+    tar \
+    unzip \
+    pkg-config \
+    autoconf \
+    automake \
+    libtool \
+    flex \
+    bison \
+    glibc-devel \
+    glibc-static \
+    libstdc++-devel \
+    libstdc++-static \
+    zlib-devel \
+    openssl-devel \
+    readline-devel \
+    ncurses-devel \
     && dnf clean all
 
 # Create SSH directory

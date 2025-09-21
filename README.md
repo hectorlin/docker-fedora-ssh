@@ -1,25 +1,26 @@
-# 🐧 Fedora SSH Docker Container
+# 🐧 Fedora C/C++ Development Docker Container
 
-A lightweight, production-ready Fedora container with SSH server enabled. Perfect for development, testing, or as a base for other services.
+A comprehensive Fedora container with SSH server and full C/C++ development environment. Perfect for development, testing, or as a base for C/C++ projects.
 
 ## ✨ Features
 
 - 🚀 **Latest Fedora** - Based on Fedora latest
 - 🔐 **SSH Server** - OpenSSH with secure configuration
 - 👥 **Multi-user** - Root and regular user with sudo
-- 🛠️ **Essential Tools** - vim, net-tools, iputils included
-- 🎯 **Simple** - No systemd complexity, just works
+- 🛠️ **C/C++ Development** - GCC, Clang, CMake, debugging tools
+- 📦 **Complete Toolchain** - All essential development libraries
+- 🎯 **Production Ready** - Optimized for development workflows
 
 ## 🚀 Quick Start
 
 ### 1. Build the Image
 ```bash
-docker build -t fedora-sshd .
+docker build -t fedora-cpp-dev .
 ```
 
 ### 2. Run the Container
 ```bash
-docker run -d --name fedora-ssh -p 2222:22 fedora-sshd
+docker run -d --name my-cpp-dev -p 2222:22 fedora-cpp-dev
 ```
 
 ### 3. Connect via SSH
@@ -27,13 +28,43 @@ docker run -d --name fedora-ssh -p 2222:22 fedora-sshd
 # As root user
 ssh -p 2222 root@localhost
 
-# As regular user
+# As regular user (recommended)
 ssh -p 2222 fedora@localhost
 ```
 
 **Default Credentials:**
 - **root**: `fedora123`
 - **fedora**: `fedora123` (with sudo privileges)
+
+## 🛠️ Development Tools
+
+### C/C++ Compilers
+- **GCC 15.2.1** - GNU C/C++ compiler suite
+- **Clang 20.1.8** - LLVM C/C++ compiler
+- **GDB 16.3** - GNU debugger
+- **LLDB** - LLVM debugger
+
+### Build Systems
+- **Make 4.4.1** - Build automation
+- **CMake 3.31.6** - Cross-platform build system
+- **Ninja 1.12.1** - Fast build system
+- **Autotools** - autoconf, automake, libtool
+
+### Development Libraries
+- **glibc** - C standard library (dev + static)
+- **libstdc++** - C++ standard library (dev + static)
+- **zlib** - Compression library
+- **OpenSSL** - SSL/TLS library
+- **readline** - Command line editing
+- **ncurses** - Terminal UI library
+
+### Analysis Tools
+- **Valgrind 3.25.1** - Memory debugging and profiling
+- **strace** - System call tracer
+- **ltrace** - Library call tracer
+
+### Version Control
+- **Git 2.51.0** - Version control system
 
 ## 📋 Container Management
 
@@ -42,19 +73,89 @@ ssh -p 2222 fedora@localhost
 docker ps
 
 # View logs
-docker logs fedora-ssh
+docker logs my-cpp-dev
 
 # Stop container
-docker stop fedora-ssh
+docker stop my-cpp-dev
 
 # Start container
-docker start fedora-ssh
+docker start my-cpp-dev
 
 # Remove container
-docker rm fedora-ssh
+docker rm my-cpp-dev
 
 # Remove image
-docker rmi fedora-sshd
+docker rmi fedora-cpp-dev
+```
+
+## 🔧 Usage Examples
+
+### Basic C/C++ Development
+```bash
+# Connect to container
+ssh -p 2222 fedora@localhost
+
+# Create a simple C++ program
+cat > hello.cpp << 'EOF'
+#include <iostream>
+int main() {
+    std::cout << "Hello from C++!" << std::endl;
+    return 0;
+}
+EOF
+
+# Compile with GCC
+g++ -o hello_gcc hello.cpp
+./hello_gcc
+
+# Compile with Clang
+clang++ -o hello_clang hello.cpp
+./hello_clang
+```
+
+### CMake Project
+```bash
+# Create CMake project
+mkdir myproject && cd myproject
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(MyProject)
+add_executable(hello hello.cpp)
+EOF
+
+cat > hello.cpp << 'EOF'
+#include <iostream>
+int main() {
+    std::cout << "Hello CMake!" << std::endl;
+    return 0;
+}
+EOF
+
+# Build with CMake
+mkdir build && cd build
+cmake ..
+make
+./hello
+```
+
+### Debugging with GDB
+```bash
+# Compile with debug symbols
+g++ -g -o debug_test hello.cpp
+
+# Debug with GDB
+gdb ./debug_test
+# (gdb) run
+# (gdb) quit
+```
+
+### Memory Debugging with Valgrind
+```bash
+# Compile program
+g++ -g -o mem_test hello.cpp
+
+# Run with Valgrind
+valgrind --leak-check=full ./mem_test
 ```
 
 ## 🔧 Configuration
@@ -74,18 +175,10 @@ The container uses a minimal SSH configuration with:
 ## 🛠️ Customization
 
 ### Install Additional Packages
-Edit the Dockerfile and add packages to the `dnf install` command:
-```dockerfile
-RUN dnf install -y \
-    openssh-server \
-    openssh-clients \
-    sudo \
-    vim \
-    net-tools \
-    iputils \
-    passwd \
-    your-package-here \
-    && dnf clean all
+Connect to the container and install packages:
+```bash
+ssh -p 2222 fedora@localhost
+sudo dnf install -y your-package-here
 ```
 
 ### Change Passwords
@@ -106,10 +199,10 @@ Replace the SSH configuration section in the Dockerfile or mount a custom config
 lsof -i :2222
 
 # Check container logs
-docker logs fedora-ssh
+docker logs my-cpp-dev
 
 # Run container interactively for debugging
-docker run -it fedora-sshd /bin/bash
+docker run -it fedora-cpp-dev /bin/bash
 ```
 
 ### SSH Connection Issues
@@ -118,32 +211,41 @@ docker run -it fedora-sshd /bin/bash
 telnet localhost 2222
 
 # Check SSH daemon status inside container
-docker exec fedora-ssh systemctl status sshd
+docker exec my-cpp-dev ps aux | grep sshd
 
 # View SSH logs
-docker exec fedora-ssh journalctl -u sshd
+docker exec my-cpp-dev journalctl -u sshd
 ```
 
-### Permission Issues
+### Development Issues
 ```bash
-# Check container permissions
-docker exec fedora-ssh ls -la /var/run/sshd
+# Check compiler installation
+docker exec my-cpp-dev gcc --version
+docker exec my-cpp-dev clang --version
 
-# Restart SSH service
-docker exec fedora-ssh systemctl restart sshd
+# Check available tools
+docker exec my-cpp-dev which gdb
+docker exec my-cpp-dev which cmake
 ```
 
 ## 📦 What's Included
 
-- **Base**: Fedora latest
+### Base System
+- **OS**: Fedora latest
 - **SSH**: OpenSSH server and client
-- **Tools**: vim, net-tools, iputils
 - **Users**: root, fedora (with sudo)
-- **Services**: SSH daemon only
+
+### Development Tools
+- **Compilers**: GCC 15.2.1, Clang 20.1.8
+- **Debuggers**: GDB 16.3, LLDB
+- **Build Systems**: Make 4.4.1, CMake 3.31.6, Ninja 1.12.1
+- **Libraries**: glibc, libstdc++, zlib, OpenSSL, readline, ncurses
+- **Analysis**: Valgrind 3.25.1, strace, ltrace
+- **Version Control**: Git 2.51.0
 
 ## 🔒 Security Notes
 
-⚠️ **Important**: This container is configured for development/testing purposes:
+⚠️ **Important**: This container is configured for development purposes:
 - Default passwords are set (change them!)
 - Root login is enabled
 - Consider hardening for production use
@@ -154,6 +256,7 @@ docker exec fedora-ssh systemctl restart sshd
 3. Use SSH keys instead of passwords
 4. Configure firewall rules
 5. Regular security updates
+6. Use non-root user for development
 
 ## 📝 License
 
@@ -162,3 +265,7 @@ This project is open source and available under the MIT License.
 ## 🤝 Contributing
 
 Feel free to submit issues and enhancement requests!
+
+---
+
+**Happy C/C++ Development! 🚀💻**
